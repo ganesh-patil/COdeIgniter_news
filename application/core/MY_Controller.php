@@ -14,10 +14,11 @@ class MY_Controller extends CI_Controller {
 
     }
 
-    public function load_view($data)
+    public function load_view($data,$returnhtml=false)
     {
         $this->load->helper('html');
-        $this->load->view('layout'.DIRECTORY_SEPARATOR.'default', $data);
+        $view_html = $this->load->view('layout'.DIRECTORY_SEPARATOR.'default', $data,$returnhtml);
+        if ($returnhtml) return $view_html;
         $this->output->enable_profiler(TRUE);
     }
 

@@ -15,7 +15,10 @@
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul class="nav navbar-nav">
                 <li>
-                    <a href="#">My News</a>
+                    <a href="<?php echo base_url().'my_news'?>">My News</a>
+                </li>
+                <li>
+                    <a href="<?php echo base_url().'login'?>">Login</a>
                 </li>
 
             </ul>
