@@ -157,6 +157,18 @@ class News extends MY_Controller {
         $data['news'] = $this->news_model->get_latest_news(10);
         $data['upload_dir'] =  'upload/';
         $this->load->view('rss_feeds',$data);
-//        $this->output->enable_profiler(TRUE);
+    }
+
+    public function download() {
+        try{
+            $this->load->model('news_model');
+            $this->load->helper(array('url'));
+            $news_id = $this->uri->segment(3);
+            $this->news_model->download($news_id);
+        }
+        catch(Exception $e){
+            $this->session->set_flashdata('error', 'Unable to download news');
+        }
+
     }
 }
