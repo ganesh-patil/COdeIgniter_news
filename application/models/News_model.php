@@ -11,6 +11,7 @@ class News_model extends CI_Model {
     public function get_latest_news($limit)
     {
         $this->db->limit($limit);
+        $this->db->where('is_published',1);
         $this->db->order_by('created', 'DESC');
         $query = $this->db->get('news');
         return $query->result();

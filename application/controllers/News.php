@@ -115,6 +115,7 @@ class News extends MY_Controller {
     private function get_post_input_data(){
         $postData['title'] = $this->input->post('title','');
         $postData['description'] = $this->input->post('description','');
+        $postData['is_published'] = 1; // by default news is published
         return $postData;
     }
 }
