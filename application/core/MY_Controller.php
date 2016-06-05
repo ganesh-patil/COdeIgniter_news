@@ -11,6 +11,7 @@ class MY_Controller extends CI_Controller {
     public function __construct()
     {
         parent::__construct();
+        $this->load->helper(array('url','form'));
         if($this->is_logged_in()){
             $this->is_user_logged_in = true;
             $user_data = $this->get_logged_in_user_data();

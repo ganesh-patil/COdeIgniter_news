@@ -6,7 +6,7 @@ class Login extends MY_Controller {
     {
         parent::__construct();   // parent constructor call
         $this->load->library('session');
-        $this->load->helper(array('url','form'));
+        
 
     }
 

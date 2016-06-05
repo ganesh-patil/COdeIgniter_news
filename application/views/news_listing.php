@@ -1,7 +1,10 @@
 
 <?php
-  if (!empty($news)) {
-      foreach($news as $news_details){ ?>
+  if (!empty($news)) { ?>
+      <div class="div-float-both news-header">
+          <h2>Breaking News</h2>
+      </div>
+      <?php foreach($news as $news_details){ ?>
           <div class="div-float-both">
           <hr>
               <div class="row">

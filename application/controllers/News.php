@@ -73,8 +73,6 @@ class News extends MY_Controller {
             $this->session->set_flashdata('error', 'Please login to access this functionality');
             redirect(base_url('login'));
         }
-
-
         if($this->input->method() == 'post') {
             $this->load->model('news_model');
             if($this->news_model->check_is_valid_data()){
@@ -96,7 +94,6 @@ class News extends MY_Controller {
                 else {
                     $this->session->set_flashdata('error', 'Image not uploaded ... please try again');
                 }
-
             }
         }
         $data['partial'] = 'news_add';
@@ -105,15 +102,11 @@ class News extends MY_Controller {
 
 
     /**
-     * delete method - Show news Details
-     *
+     * delete method -
+     *delete news by id
      */
     public function delete()
     {
-
-        /**
-         * <@todo : please check current users record>
-         */
         $this->load->helper(array('url'));
         if(!$this->is_user_logged_in){
             $this->session->set_flashdata('error', 'Please login to access this functionality');
@@ -124,11 +117,11 @@ class News extends MY_Controller {
         $news_id = $this->uri->segment(3);
 
         $news_details = $this->news_model->get_news_by_id($news_id);
-        if(empty($news_details)) {
+        if(empty($news_details)) {                                       // check news exist
             $this->session->set_flashdata('error', 'Invalid News ');
             redirect(base_url());
         }
-        if($this->logged_in_user_id != $news_details->user_id ) {
+        if($this->logged_in_user_id != $news_details->user_id ) {                //  not allowing delete news of other users
             $this->session->set_flashdata('error', 'You are not authorised to perform this operation. ');
             redirect(base_url());
         }
@@ -149,7 +142,7 @@ class News extends MY_Controller {
     }
 
     /**
-     * Rss feeds of lates news
+     * Rss feeds of latest news
      */
     public function rss_feeds() {
         $this->load->helper(array('url','date','text'));
@@ -159,6 +152,9 @@ class News extends MY_Controller {
         $this->load->view('rss_feeds',$data);
     }
 
+    /**
+     * Downlaod News as pdf
+     */
     public function download() {
         try{
             $this->load->model('news_model');

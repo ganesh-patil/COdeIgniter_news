@@ -21,7 +21,7 @@ class News_model extends CI_Model {
 
     public function get_news_by_user_id($user_id)
     {
-//        $this->db->limit($limit);
+        $this->db->limit(50);  // change limit with pagination
         $this->db->select(array('news.*','users.email','users.first_name','users.last_name'));
         $this->db->where('news.user_id',$user_id);
         $this->db->join('users', 'users.id = news.user_id');

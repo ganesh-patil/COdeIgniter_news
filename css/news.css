@@ -34,3 +34,9 @@ footer {
 .error {
     color: red;
 }
+.login-head {
+    float: right;
+}
+.news-header {
+ text-align: center;
+}
