@@ -35,14 +35,18 @@ class User extends CI_Model {
         $this -> db -> select('id, email, password');
         $this -> db -> from('users');
         $this -> db -> where('email', $username);
-        $this -> db -> where('password', MD5($password));
+//        $this -> db -> where('password', MD5($password));
         $this -> db -> where('active', 1);
         $this -> db -> limit(1);
 
         $query = $this -> db -> get();
 
         if($query -> num_rows() == 1) {
-            return $query->result();
+            $user =  $query->result();
+            $hash =  $user[0]->password;
+            if(password_verify($password, $hash)) {
+                return $user;
+            }
         }
         else {
             return false;
@@ -71,6 +75,52 @@ class User extends CI_Model {
         $this->db->where('id', $id);
         $this->db->delete('users');
         return $this->db->affected_rows();
+    }
+
+    /**
+     * send_email using PHPmailer.
+     * @param $email
+     * @param $activation_code
+     * @param $first_name
+     * @param $last_name
+     * @param bool $forgot_password
+     * @return mixed
+     */
+    public function send_email($email,$activation_code,$first_name, $last_name,$forgot_password = false) {
+        $this->load->add_package_path(APPPATH.'third_party/phpmailer', FALSE);
+        $this->load->library('PHPMailer','phpmailer');
+        $this->config->load('app_config');
+
+        if($forgot_password) {
+            $subject = 'News Portal password change';
+            $body = "Hello $first_name  $last_name,<br>  <br> Please <a href='".base_url().'verification/'.$activation_code."' > Click Here</a> to change your password. <br>  Thank you  ";
+        }
+        else {
+            $subject = 'News Portal Email  Verification';
+            $body = "Hello $first_name  $last_name,<br> Thank you for your registration. <br> Please <a href='".base_url().'verification/'.$activation_code."' > Click Here</a> to vetify your email address. <br>  Thank you  ";
+        }
+
+        if($this->config->item('phpmailer_host') == 'localhost') {
+            $this->phpmailer->isMail();                             //use php mail funciton
+        }
+        else {
+            //using SMTP mail service.
+            $this->phpmailer->isSMTP();                                      // Set mailer to use SMTP
+            $this->phpmailer->Host =  $this->config->item('smtp_host');  // Specify main and backup SMTP servers
+            $this->phpmailer->SMTPAuth = true;                               // Enable SMTP authentication
+            $this->phpmailer->Username =  $this->config->item('smpt_username');                 // SMTP username
+            $this->phpmailer->Password =  $this->config->item('smpt_password');                           // SMTP password
+            $this->phpmailer->SMTPSecure = 'tls';                            // Enable TLS encryption, `ssl` also accepted
+            $this->phpmailer->Port = $this->config->item('smpt_port');
+        }
+        $this->phpmailer->From =  $this->config->item('from_email');
+        $this->phpmailer->FromName =  $this->config->item('from_name');
+        $this->phpmailer->IsHTML(true);
+        $this->phpmailer->Subject = $subject;
+        $this->phpmailer->Body = $body;
+        $this->phpmailer->AddAddress($email);
+
+        return $this->phpmailer->Send();
     }
 
 

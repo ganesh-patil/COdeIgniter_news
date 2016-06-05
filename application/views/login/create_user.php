@@ -2,8 +2,7 @@
 <div class="modal-dialog">
       <div class="loginmodal-container">
             <h1>Enter Your Password</h1><br>
-            <?php $hidden = array('id' => $id); ?>
-            <?php echo form_open('' ,array('class'=>''),$hidden);
+            <?php echo form_open('' ,array('class'=>''));
             echo form_label('Password', 'password'); ?><span style="color: red">*</span>
             <?php echo form_password(array(
                 'name'          => 'password',

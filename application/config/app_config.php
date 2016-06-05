@@ -14,7 +14,7 @@ $config['min_height']           = 200;
 
 
 //email configurations 
-
+$config['phpmailer_host']      = 'smtp';  //  provide options 'localhost'  or 'smtp' . if localhost then local php mailer is used . for smtp smtp service is used.
 $config['smtp_host']          = 'smtp.gmail.com';
 $config['smpt_username']        = 'patil.ganesh170@gmail.com';
 $config['smpt_password']             = 'December@2015';

@@ -4,17 +4,47 @@ class Login extends MY_Controller {
 
     function __construct()
     {
-        parent::__construct();
+        parent::__construct();   // parent constructor call
         $this->load->library('session');
         $this->load->helper(array('url','form'));
 
+    }
+
+
+    /**
+     * Main login method
+     */
+    public function index() {
+        if ($this->is_logged_in())       //check if user is already logged in
+        {
+            $this->session->set_flashdata('error', "You are already logged in ");
+            redirect(base_url(), 'refresh');
+        }
+        $this->load->model('user');
+        $this->load->library('form_validation');
+
+        $this->form_validation->set_rules('email', 'email', 'trim|required');
+        $this->form_validation->set_rules('password', 'Password', 'trim|required|callback_check_database');
+
+        if($this->form_validation->run() == FALSE)
+        {
+            //Field validation failed.  User redirected to login page
+            $data['partial'] = 'login/login';
+            $this->load_view($data);
+        }
+        else
+        {
+            //Go to private area
+            $this->session->set_flashdata('success', "logged in sucessfully..");
+            redirect(base_url('my_news'), 'refresh');
+        }
     }
 
     /**
      * User registration using email address
      */
     public function register() {
-        if ($this->is_logged_in())
+        if ($this->is_logged_in())               //check User is already logged in
         {
             $this->session->set_flashdata('error', "You are already logged in ");
             redirect(base_url(), 'refresh');
@@ -27,19 +57,20 @@ class Login extends MY_Controller {
         $this->form_validation->set_rules('email', 'Email', 'required|valid_email|callback_email_unique_check');
         if ($this->form_validation->run() == true)
         {
-            $data['email']    = strtolower($this->input->post('email'));
-            $data['first_name']  = $this->input->post('first_name');
-            $data['last_name']   = $this->input->post('last_name');
-            $data['activation_code'] = random_string('alnum', 25);
-            $data['active'] = 0;
+            $data['email']           = strtolower($this->input->post('email'));
+            $data['first_name']      = $this->input->post('first_name');
+            $data['last_name']       = $this->input->post('last_name');
+            $data['activation_code'] = random_string('alnum', 25);  //generate totan for activation code.
+            $data['active']          = 0;                           //set user as inactive initialy
 
-            if ($this->user->register_user($data))
+            if ($this->user->register_user($data))                 // register user
             {
-                if($this->send_email($data['email'],$data['activation_code'], $data['first_name'],$data['last_name'])){
-                    $this->session->set_flashdata('success', "Registration done,Please check your inbox for verification link.");
+                // send email if user registered successfully
+                if($this->user->send_email($data['email'],$data['activation_code'], $data['first_name'],$data['last_name'])){
+                    $this->session->set_flashdata('success', "Registration complete,Please check your inbox for verification link.");
                 }
                 else {
-
+                    // If email is not sent , inform user so that he can get verification code on change password.
                     $this->session->set_flashdata('error', "Error while sending verification email. please change your password for verification.");
                 }
                 redirect(base_url());
@@ -52,12 +83,18 @@ class Login extends MY_Controller {
         $this->load_view($data);
     }
 
+    /**
+     * email_unique_check Check email is unique or not
+     * callback method for  email validation
+     * @param $email
+     * @return bool
+     */
 
     public function email_unique_check($email) {
         $this->load->model('user');
         if ($this->user->is_email_exists($email))
         {
-            $this->form_validation->set_message('email_unique_check', 'The {field}  already exists.');
+            $this->form_validation->set_message('email_unique_check', 'The {field}  already exists.');  // set validation rule if already exists
             return FALSE;
         }
         else
@@ -69,69 +106,39 @@ class Login extends MY_Controller {
 
     /**
      * Verify user by email address
+     * this method is called with activation code is url segment.
      */
     public function verification() {
         $this->load->library(array('form_validation'));
         $activation_code = $this->uri->segment(2);
-        if ($this->is_logged_in())
+        if ($this->is_logged_in())                           // check if user is already logged in
         {
             $this->session->set_flashdata('error', "You are already logged in ");
             redirect(base_url(), 'refresh');
         }
         $this->load->model('user');
-        $user_data = $this->user->get_user_by_activation_code($activation_code);
-        if(empty($user_data)){
-            $this->session->set_flashdata('error', $this->lang->line('invalid_link'));
+        $user_data = $this->user->get_user_by_activation_code($activation_code);  // check for activation code is valid or not.
+        if(empty($user_data)) {
+            $this->session->set_flashdata('error', $this->lang->line('Invalid link'));
             redirect(base_url(), 'refresh');
         }
         $this->form_validation->set_rules('password', 'Please enter valid password', 'required|min_length[5]|max_length[10]|matches[password_confirm]');
         $this->form_validation->set_rules('password_confirm', 'please enter valid confirm passsword', 'required');
-
         if ($this->form_validation->run() == true) {
             $this->load->model('user');
-            $data['password']    = md5($this->input->post('password'));
-
-            $data['activation_code'] = '';
-            $data['active'] = 1;
-            $this->user->update_user_password($this->input->post('id'),$data);
+            $data['password']    = password_hash($this->input->post('password'), PASSWORD_DEFAULT);        //hash password before save.
+            $data['activation_code'] = '';                                   // set activation code to blank so that user will not use it again.
+            $data['active'] = 1;           // activate the user
+            $this->user->update_user_password($user_data->id,$data);
             $this->session->set_flashdata('success', "Password saved successfully. please login to your account.");
             redirect(base_url('login'));
         }
-        $data['id'] =  $user_data->id;
         $data['partial'] = 'login/create_user';
         $this->load_view($data);
 
     }
 
-    /**
-     * Mail login method
-     */
-     public function index() {
-         if ($this->is_logged_in())
-         {
-             $this->session->set_flashdata('error', "You are already logged in ");
-             redirect(base_url(), 'refresh');
-         }
-         $this->load->model('user');
-         $this->load->library('form_validation');
 
-         $this->form_validation->set_rules('email', 'email', 'trim|required');
-         $this->form_validation->set_rules('password', 'Password', 'trim|required|callback_check_database');
-         $this->form_validation->set_message('xss_clean', 'Invalid email or password');
-
-         if($this->form_validation->run() == FALSE)
-         {
-             //Field validation failed.  User redirected to login page
-             $data['partial'] = 'login/login';
-             $this->load_view($data);
-         }
-         else
-         {
-             //Go to private area
-             $this->session->set_flashdata('success', "logged in sucessfully..");
-             redirect(base_url('my_news'), 'refresh');
-         }
-     }
 
     /**
      * Logout method
@@ -148,16 +155,11 @@ class Login extends MY_Controller {
         redirect(base_url('login'), 'refresh');
     }
 
-    /** check_database method : check user credentials and login
-     * @param $password
-     * @return bool
-     */
-
     /**
-     * User registration using email address
+     *Forgot Password functionality
      */
     public function forgot_password() {
-        if ($this->is_logged_in())
+        if ($this->is_logged_in())            // check if user is already logged in.
         {
             $this->session->set_flashdata('error', "You are already logged in ");
             redirect(base_url(), 'refresh');
@@ -170,18 +172,17 @@ class Login extends MY_Controller {
         {
             $data['email']    = strtolower($this->input->post('email'));
             $data['activation_code'] = random_string('alnum', 25);
-            $user = $this->user->get_user_by_email($data['email']);
+            $user = $this->user->get_user_by_email($data['email']);            // check user exis or not in system
             if(empty($user)) {
                 $this->session->set_flashdata('error', "Email not exist.please register");
                 redirect(base_url());
             }
             if ($this->user->update_user_password($user->id, $data))
             {
-                if($this->send_email($data['email'],$data['activation_code'], $user->first_name,$user->last_name,true)){
+                if($this->user->send_email($data['email'],$data['activation_code'], $user->first_name,$user->last_name,true)){
                     $this->session->set_flashdata('success', "password change link sent. please check inbox.");
                 }
                 else {
-
                     $this->session->set_flashdata('error', "Error while sending verification email. please change your password for verification.");
                 }
                 redirect(base_url());
@@ -193,14 +194,17 @@ class Login extends MY_Controller {
         $data['partial'] = 'login/forgot_password';
         $this->load_view($data);
     }
+
+    /** check_database method : check user credentials and login
+     * @param $password
+     * @return bool
+     */
     public function check_database($password)
     {
         //Field validation succeeded.  Validate against database
         $username = $this->input->post('email');
-
         //query the database
         $result = $this->user->login($username, $password);
-
         if($result)
         {
             $sess_array = array();
@@ -220,39 +224,4 @@ class Login extends MY_Controller {
             return false;
         }
     }
-
-    private function send_email($email,$activation_code,$first_name, $last_name,$forgot_password = false){
-        $this->load->add_package_path(APPPATH.'third_party/phpmailer', FALSE);
-        $this->load->library('PHPMailer','phpmailer');
-        $this->config->load('app_config');
-
-        if($forgot_password) {
-            $subject = 'News Portal password change';
-            $body = "Hello $first_name  $last_name,<br>  <br> Please <a href='".base_url().'verification/'.$activation_code."' > Click Here</a> to change your password. <br>  Thank you  ";
-        }
-        else {
-            $subject = 'News Portal Email  Verification';
-            $body = "Hello $first_name  $last_name,<br> Thank you for your registration. <br> Please <a href='".base_url().'verification/'.$activation_code."' > Click Here</a> to vetify your email address. <br>  Thank you  ";
-        }
-
-
-
-        //using SMTP mail service.
-        $this->phpmailer->isSMTP();                                      // Set mailer to use SMTP
-        $this->phpmailer->Host =  $this->config->item('smtp_host');  // Specify main and backup SMTP servers
-        $this->phpmailer->SMTPAuth = true;                               // Enable SMTP authentication
-        $this->phpmailer->Username =  $this->config->item('smpt_username');                 // SMTP username
-        $this->phpmailer->Password =  $this->config->item('smpt_password');                           // SMTP password
-        $this->phpmailer->SMTPSecure = 'tls';                            // Enable TLS encryption, `ssl` also accepted
-        $this->phpmailer->Port = $this->config->item('smpt_port');
-        $this->phpmailer->From =  $this->config->item('from_email');
-        $this->phpmailer->FromName =  $this->config->item('from_name');
-        $this->phpmailer->IsHTML(true);
-        $this->phpmailer->Subject = $subject;
-        $this->phpmailer->Body = $body;
-        $this->phpmailer->AddAddress($email);
-
-        return $this->phpmailer->Send();
-    }
-    
 }
