@@ -1,3 +1,6 @@
+<script type='text/javascript' src="<?php echo base_url(); ?>js/ckeditor.js"></script>
+
+<h2> Add News </h2>
 <?php
     echo form_open_multipart(base_url().'news'.DIRECTORY_SEPARATOR.'add');
 
@@ -13,7 +16,7 @@
         'size'          => '50',
         'style'         => 'width:80%'
     ));
-    echo form_error('title');
+    echo form_error('title','<div class="error">', '</div>');
     ?>
 </div>
 <div class="form-group">
@@ -23,11 +26,10 @@
         'name'          => 'description',
         'value'         => set_value('description'),
         'class'         => 'form-control',
-
-        'style'         => 'width:80%'
+         'id'           =>'description',
     ));
 
-    echo form_error('description');
+    echo form_error('description','<div class="error">', '</div>');
     ?>
 </div>
 <div class="form-group">
@@ -42,4 +44,5 @@
 )); ?>
 
 <?php form_close() ?>
+<script type='text/javascript' src="<?php echo base_url(); ?>js/sample.js"></script>
 
