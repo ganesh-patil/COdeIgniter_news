@@ -2,13 +2,26 @@
   if (!empty($news)) { ?>
 
           <h2><?php echo $news->title ?></h2>
+
+      <div class="row">
+          <div class="col-lg-9">
+              <h2<?php echo $news->title ?> </h2>
+          </div>
+
+          <div  class="add_news_btn col-lg-3">
+              <?php if($is_logged_in && $logged_in_user_id == $news->user_id ) { ?>
+                  <a type="button" href="<?php echo base_url().'news/delete/'.$news->id?>" class="btn btn-danger">Delete</a>
+              <?php } ?>
+          </div>
+
+      </div>
           <?php
           $post_date =date_timestamp_get(new DateTime($news->created));// '1079621429';
           $now = time();
           $units = 3;
           ?>
           <p class="lead">
-              <?php echo timespan($post_date, $now, 1);?> ago by <a href="#">Start Bootstrap</a>
+              <?php echo timespan($post_date, $now, 1);?> ago by <a href="#"><?php echo $news->email?></a>
           </p>
 
           <hr>

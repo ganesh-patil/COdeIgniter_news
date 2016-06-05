@@ -20,6 +20,7 @@ class News extends MY_Controller {
         $this->load->model('news_model');
         $data['news'] = $this->news_model->get_latest_news(10);
         $data['partial'] = 'news_listing';
+
         $this->load_view($data);
     }
 
@@ -47,12 +48,17 @@ class News extends MY_Controller {
     public function my_news()
     {
         $this->load->helper(array('url','date','text'));
+        if(!$this->is_user_logged_in){
+            $this->session->set_flashdata('error', 'Please login to access this functionality');
+            redirect(base_url('login'));
+        }
+
         $this->load->model('news_model');
-        $logged_in_user_id = 1; // fetch this
+
         /**
          * <@todo : Add Pagination here>
          */
-        $data['news'] = $this->news_model->get_news_by_user_id($logged_in_user_id);
+        $data['news'] = $this->news_model->get_news_by_user_id($this->logged_in_user_id);
         $data['partial'] = 'news_listing';
         $this->load_view($data);
     }
@@ -63,11 +69,19 @@ class News extends MY_Controller {
     public function add()
     {
         $this->load->helper(array('url','form'));
+        if(!$this->is_user_logged_in){
+            $this->session->set_flashdata('error', 'Please login to access this functionality');
+            redirect(base_url('login'));
+        }
+
 
         if($this->input->method() == 'post') {
             $this->load->model('news_model');
             if($this->news_model->check_is_valid_data()){
                 $news_data = $this->get_post_input_data();
+                if($this->is_user_logged_in){
+                    $news_data['user_id'] = $this->logged_in_user_id;
+                }
                 $image_uploaded_data = $this->news_model->upload_news_image();
                 if($image_uploaded_data){
                     if(is_array($image_uploaded_data)){
@@ -101,12 +115,27 @@ class News extends MY_Controller {
          * <@todo : please check current users record>
          */
         $this->load->helper(array('url'));
+        if(!$this->is_user_logged_in){
+            $this->session->set_flashdata('error', 'Please login to access this functionality');
+            redirect(base_url('login'));
+        }
+
         $this->load->model('news_model');
         $news_id = $this->uri->segment(3);
+
+        $news_details = $this->news_model->get_news_by_id($news_id);
+        if(empty($news_details)) {
+            $this->session->set_flashdata('error', 'Invalid News ');
+            redirect(base_url());
+        }
+        if($this->logged_in_user_id != $news_details->user_id ) {
+            $this->session->set_flashdata('error', 'You are not authorised to perform this operation. ');
+            redirect(base_url());
+        }
         if($this->news_model->delete_news($news_id)){
             $this->session->set_flashdata('success', 'News deleted successfully.');
         }
-        else{
+        else {
             $this->session->set_flashdata('error', 'Delete Error .. Please try again');
         }
         redirect(base_url());
@@ -117,5 +146,17 @@ class News extends MY_Controller {
         $postData['description'] = $this->input->post('description','');
         $postData['is_published'] = 1; // by default news is published
         return $postData;
+    }
+
+    /**
+     * Rss feeds of lates news
+     */
+    public function rss_feeds() {
+        $this->load->helper(array('url','date','text'));
+        $this->load->model('news_model');
+        $data['news'] = $this->news_model->get_latest_news(10);
+        $data['upload_dir'] =  'upload/';
+        $this->load->view('rss_feeds',$data);
+//        $this->output->enable_profiler(TRUE);
     }
 }

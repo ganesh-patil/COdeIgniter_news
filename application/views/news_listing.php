@@ -10,7 +10,9 @@
                   </div>
                   
                   <div  class="add_news_btn col-lg-3">
+                      <?php if($is_logged_in && $logged_in_user_id == $news_details->user_id ) { ?>
                       <a type="button" href="<?php echo base_url().'news/delete/'.$news_details->id?>" class="btn btn-danger">Delete</a>
+                      <?php } ?>
                   </div>
 
               </div>
@@ -21,7 +23,7 @@
               $units = 3;
               ?>
           <p class="lead">
-             <?php echo timespan($post_date, $now, 1);?> ago by <a href="#">Start Bootstrap</a>
+             <?php echo timespan($post_date, $now, 1);?> ago by <a href="#"><?php echo $news_details->email?></a>
           </p>
 
 
