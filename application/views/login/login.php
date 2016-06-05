@@ -29,8 +29,8 @@
     )); ?>
     <?php echo form_close();?>
 
-    <div class=" create-link">
-      <a href="<?php echo base_url('register')?>">Create account</a>
+    <div class="login-help">
+      <a href="<?php echo base_url('register')?>">Create account</a> &nbsp;&nbsp; <a href="<?php echo base_url('login/forgot_password')?>">forgot password?</a>
     </div>
   </div>
 </div>

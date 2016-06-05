@@ -14,6 +14,12 @@ class User extends CI_Model {
         $query = $this->db->get('users', 1);
         return $query->row();
     }
+
+    public function get_user_by_email($email) {
+        $this->db->where('email', $email);
+        $query = $this->db->get('users', 1);
+        return $query->row();
+    }
     public function register_user($data) {
 
         return $this->db->insert('users', $data);
@@ -22,6 +28,7 @@ class User extends CI_Model {
     public function update_user_password($user_id,$data) {
         $this->db->where('id', $user_id);
         $this->db->update('users', $data);
+        return $this->db->affected_rows();
     }
 
     function login($username, $password) {

@@ -35,8 +35,13 @@ class Login extends MY_Controller {
 
             if ($this->user->register_user($data))
             {
-                $this->send_email($data['email'],$data['activation_code']);
-                $this->session->set_flashdata('success', "Registration done,Please check your inbox for verification link.");
+                if($this->send_email($data['email'],$data['activation_code'], $data['first_name'],$data['last_name'])){
+                    $this->session->set_flashdata('success', "Registration done,Please check your inbox for verification link.");
+                }
+                else {
+
+                    $this->session->set_flashdata('error', "Error while sending verification email. please change your password for verification.");
+                }
                 redirect(base_url());
             }
             else{
@@ -147,6 +152,47 @@ class Login extends MY_Controller {
      * @param $password
      * @return bool
      */
+
+    /**
+     * User registration using email address
+     */
+    public function forgot_password() {
+        if ($this->is_logged_in())
+        {
+            $this->session->set_flashdata('error', "You are already logged in ");
+            redirect(base_url(), 'refresh');
+        }
+        $this->load->helper('string');
+        $this->load->library(array('form_validation'));
+        $this->load->model('user');
+        $this->form_validation->set_rules('email', 'Email', 'required|valid_email');
+        if ($this->form_validation->run() == true)
+        {
+            $data['email']    = strtolower($this->input->post('email'));
+            $data['activation_code'] = random_string('alnum', 25);
+            $user = $this->user->get_user_by_email($data['email']);
+            if(empty($user)) {
+                $this->session->set_flashdata('error', "Email not exist.please register");
+                redirect(base_url());
+            }
+            if ($this->user->update_user_password($user->id, $data))
+            {
+                if($this->send_email($data['email'],$data['activation_code'], $user->first_name,$user->last_name,true)){
+                    $this->session->set_flashdata('success', "password change link sent. please check inbox.");
+                }
+                else {
+
+                    $this->session->set_flashdata('error', "Error while sending verification email. please change your password for verification.");
+                }
+                redirect(base_url());
+            }
+            else{
+                $this->session->set_flashdata('error', "Error while password change. please try again");
+            }
+        }
+        $data['partial'] = 'login/forgot_password';
+        $this->load_view($data);
+    }
     public function check_database($password)
     {
         //Field validation succeeded.  Validate against database
@@ -175,16 +221,23 @@ class Login extends MY_Controller {
         }
     }
 
-    private function send_email($email,$activation_code){
+    private function send_email($email,$activation_code,$first_name, $last_name,$forgot_password = false){
         $this->load->add_package_path(APPPATH.'third_party/phpmailer', FALSE);
         $this->load->library('PHPMailer','phpmailer');
         $this->config->load('app_config');
 
-        $subject = 'News Portal Email  Verification';
+        if($forgot_password) {
+            $subject = 'News Portal password change';
+            $body = "Hello $first_name  $last_name,<br>  <br> Please <a href='".base_url().'verification/'.$activation_code."' > Click Here</a> to change your password. <br>  Thank you  ";
+        }
+        else {
+            $subject = 'News Portal Email  Verification';
+            $body = "Hello $first_name  $last_name,<br> Thank you for your registration. <br> Please <a href='".base_url().'verification/'.$activation_code."' > Click Here</a> to vetify your email address. <br>  Thank you  ";
+        }
 
-        $body = "Hello $email <br> Thank you for registration. <br> Please <a href='".base_url().'verification/'.$activation_code."' > Click Here</a> to vetify your email address. <br>  Thanks ";
 
 
+        //using SMTP mail service.
         $this->phpmailer->isSMTP();                                      // Set mailer to use SMTP
         $this->phpmailer->Host =  $this->config->item('smtp_host');  // Specify main and backup SMTP servers
         $this->phpmailer->SMTPAuth = true;                               // Enable SMTP authentication
@@ -198,7 +251,8 @@ class Login extends MY_Controller {
         $this->phpmailer->Subject = $subject;
         $this->phpmailer->Body = $body;
         $this->phpmailer->AddAddress($email);
-        return  $this->phpmailer->Send();
+
+        return $this->phpmailer->Send();
     }
     
 }
