@@ -30,7 +30,7 @@
     <?php echo form_close();?>
 
     <div class="login-help">
-      <a href="<?php echo base_url('register')?>">Register</a>
+      <a href="<?php echo base_url('register')?>">Create account</a>
     </div>
   </div>
 </div>

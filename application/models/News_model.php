@@ -55,9 +55,11 @@ class News_model extends CI_Model {
         return false;
     }
 
+    /**
+     * upload imgae
+     * @return bool
+     */
     public  function upload_news_image() {
-
-
         if (!(isset($_FILES['image_url']) && is_uploaded_file($_FILES['image_url']['tmp_name']))) {
 
             return true;  // User has not seleted file.
@@ -94,6 +96,12 @@ class News_model extends CI_Model {
         }
     }
 
+    /**
+     * image resize
+     * @param $filepath
+     * @return bool
+     */
+
     public function image_resize($filepath){
         $config['image_library'] = 'gd2';
         $config['source_image'] = $filepath;
@@ -101,10 +109,7 @@ class News_model extends CI_Model {
         $config['maintain_ratio'] = TRUE;
         $config['width']         = 300;
         $config['height']       = 200;
-
         $this->load->library('image_lib', $config);
-
-//        $this->image_lib->resize();
         if ( ! $this->image_lib->resize())
         {
             return false;

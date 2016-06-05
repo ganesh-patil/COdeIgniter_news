@@ -14,12 +14,22 @@
         <!-- Collect the nav links, forms, and other content for toggling -->
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul class="nav navbar-nav">
+                <?php if($is_logged_in) { ?>
                 <li>
                     <a href="<?php echo base_url().'my_news'?>">My News</a>
                 </li>
-                <li>
-                    <a href="<?php echo base_url().'login'?>">Login</a>
-                </li>
+                <?php } ?>
+
+                <?php if($is_logged_in) { ?>
+                    <li>
+                        <a href="<?php echo base_url().'logout'?>">Logout</a>
+                    </li>
+                <?php } else { ?>
+                    <li>
+                        <a href="<?php echo base_url().'login'?>">Login</a>
+                    </li>
+                <?php } ?>
+
 
             </ul>
         </div>

@@ -4,7 +4,7 @@
 
     <?php echo link_tag('css/bootstrap.min.css')?>
     <?php echo link_tag('css/news.css')?>
-   
+
     <script type='text/javascript' src="<?php echo base_url(); ?>js/jquery.js"></script>
     <script type='text/javascript' src="<?php echo base_url(); ?>js/custom.js"></script>
     <script type='text/javascript' src="<?php echo base_url(); ?>js/bootstrap.min.js"></script>
@@ -31,11 +31,15 @@
         <!-- Blog Post Content Column -->
 
            <div class="col-lg-12">
-               <?php if($this->uri->segment(2)  != 'add') { ?>
-                   <div  class="add_news_btn">
-                       <a type="button" href="<?php echo base_url().'news/add'?>" class="btn btn-primary">Add News</a>
-                   </div>
-               <?php   }  ?>
+               <?php if($is_logged_in) { ?>
+                   <?php if ($this->uri->segment(2) != 'add') { ?>
+                       <div class="add_news_btn">
+                           <a type="button" href="<?php echo base_url() . 'news/add' ?>" class="btn btn-primary">Add
+                               News</a>
+                       </div>
+                   <?php }
+               }
+               ?>
                <?php $this->load->view($partial); ?>
 
            </div>

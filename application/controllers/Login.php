@@ -14,9 +14,14 @@ class Login extends MY_Controller {
      * User registration using email address
      */
     public function register() {
+        if ($this->is_logged_in())
+        {
+            $this->session->set_flashdata('error', "You are already logged in ");
+            redirect(base_url(), 'refresh');
+        }
         $this->load->helper('string');
         $this->load->library(array('form_validation'));
-        $this->form_validation->set_rules('email', 'Email', 'required|valid_email|is_unique[users.email]');
+        $this->form_validation->set_rules('email', 'Email', 'required|valid_email');
         if ($this->form_validation->run() == true)
         {
             $data['email']    = strtolower($this->input->post('email'));
@@ -43,13 +48,11 @@ class Login extends MY_Controller {
     public function verification() {
         $this->load->library(array('form_validation'));
         $activation_code = $this->uri->segment(2);
-        $this->data['title'] = $this->lang->line('create_user_heading');
-
-//        if ($this->ion_auth->logged_in())
-//        {
-//            $this->session->set_flashdata('error', $this->lang->line('user_already_login'));
-//            redirect('auth', 'refresh');
-//        }
+        if ($this->is_logged_in())
+        {
+            $this->session->set_flashdata('error', "You are already logged in ");
+            redirect(base_url(), 'refresh');
+        }
 
         $this->load->model('user');
         $user_data = $this->user->get_user_by_activation_code($activation_code);
@@ -75,6 +78,11 @@ class Login extends MY_Controller {
     }
 
      public function index() {
+         if ($this->is_logged_in())
+         {
+             $this->session->set_flashdata('error', "You are already logged in ");
+             redirect(base_url(), 'refresh');
+         }
          $this->load->model('user');
          $this->load->library('form_validation');
 
@@ -91,19 +99,24 @@ class Login extends MY_Controller {
          else
          {
              //Go to private area
-             print_r($_SESSION);die;
+             
              redirect(base_url(), 'refresh');
          }
      }
 
     function logout()
     {
+        if (!$this->is_logged_in())
+        {
+            $this->session->set_flashdata('error', "You are not logged in ");
+            redirect(base_url(), 'refresh');
+        }
         $this->session->unset_userdata('logged_in');
         session_destroy();
-        redirect('login', 'refresh');
+        redirect(base_url('login'), 'refresh');
     }
 
-    function check_database($password)
+    private function check_database($password)
     {
         //Field validation succeeded.  Validate against database
         $username = $this->input->post('email');
@@ -134,23 +147,22 @@ class Login extends MY_Controller {
     private function send_email($email,$activation_code){
         $this->load->add_package_path(APPPATH.'third_party/phpmailer', FALSE);
         $this->load->library('PHPMailer','phpmailer');
+        $this->config->load('app_config');
 
-        $subject = 'Verification Link';
-        $name = 'iCoreThink Technologies';
+        $subject = 'News Portal Email  Verification';
 
-        $body = "Please <a href='".base_url().'/create_user/'.$activation_code."' > Click Here</a> For verification ";
+        $body = "Hello $email <br> Thank you for registration. <br> Please <a href='".base_url().'/verification/'.$activation_code."' > Click Here</a> to vetify your email address. <br>  Thanks ";
 
-//		$this->phpmailer->IsMail();
 
         $this->phpmailer->isSMTP();                                      // Set mailer to use SMTP
-        $this->phpmailer->Host = 'smtp.gmail.com';  // Specify main and backup SMTP servers
+        $this->phpmailer->Host =  $this->config->item('smtp_host');  // Specify main and backup SMTP servers
         $this->phpmailer->SMTPAuth = true;                               // Enable SMTP authentication
-        $this->phpmailer->Username = 'patil.ganesh170@gmail.com';                 // SMTP username
-        $this->phpmailer->Password = 'December@2015';                           // SMTP password
+        $this->phpmailer->Username =  $this->config->item('smpt_username');                 // SMTP username
+        $this->phpmailer->Password =  $this->config->item('smpt_password');                           // SMTP password
         $this->phpmailer->SMTPSecure = 'tls';                            // Enable TLS encryption, `ssl` also accepted
-        $this->phpmailer->Port =587;
-        $this->phpmailer->From = 'patil.ganesh170@gmail.com';
-        $this->phpmailer->FromName = 'iCoreThink Technologies';
+        $this->phpmailer->Port = $this->config->item('smpt_port');
+        $this->phpmailer->From =  $this->config->item('from_email');
+        $this->phpmailer->FromName =  $this->config->item('from_name');
         $this->phpmailer->IsHTML(true);
         $this->phpmailer->Subject = $subject;
         $this->phpmailer->Body = $body;
