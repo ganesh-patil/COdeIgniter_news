@@ -146,6 +146,7 @@ class News_model extends CI_Model {
         $pdf->setFooterData(array(0,64,0), array(0,64,128));
 
 // set header and footer fonts
+
         $pdf->setHeaderFont(Array(PDF_FONT_NAME_MAIN, '', PDF_FONT_SIZE_MAIN));
         $pdf->setFooterFont(Array(PDF_FONT_NAME_DATA, '', PDF_FONT_SIZE_DATA));
 
