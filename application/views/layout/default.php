@@ -4,6 +4,7 @@
 
     <?php echo link_tag('css/bootstrap.min.css')?>
     <?php echo link_tag('css/news.css')?>
+   
     <script type='text/javascript' src="<?php echo base_url(); ?>js/jquery.js"></script>
     <script type='text/javascript' src="<?php echo base_url(); ?>js/custom.js"></script>
     <script type='text/javascript' src="<?php echo base_url(); ?>js/bootstrap.min.js"></script>
