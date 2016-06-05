@@ -68,7 +68,7 @@ class Login extends MY_Controller {
             $data['activation_code'] = '';
             $data['active'] = 1;
             $this->user->update_user_password($this->input->post('id'),$data);
-            $this->session->set_flashdata('success', "Password savesd successfully. please login to your account.");
+            $this->session->set_flashdata('success', "Password saved successfully. please login to your account.");
             redirect(base_url('login'));
         }
         $data['id'] =  $user_data->id;

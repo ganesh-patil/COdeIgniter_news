@@ -10,7 +10,6 @@ class MY_Controller extends CI_Controller {
     public $logged_in_user_id;
     public function __construct()
     {
-
         parent::__construct();
         if($this->is_logged_in()){
             $this->is_user_logged_in = true;
@@ -42,7 +41,6 @@ class MY_Controller extends CI_Controller {
         $this->load->library('session');
         return $this->session->userdata('logged_in');
     }
-
 
 
 }

@@ -10,6 +10,7 @@
                   </div>
                   
                   <div  class="add_news_btn col-lg-3">
+                      <a type="button" href="<?php echo base_url().'news/download/'.$news_details->id?>" class="btn btn-primary">Download</a>
                       <?php if($is_logged_in && $logged_in_user_id == $news_details->user_id ) { ?>
                       <a type="button" href="<?php echo base_url().'news/delete/'.$news_details->id?>" class="btn btn-danger">Delete</a>
                       <?php } ?>
