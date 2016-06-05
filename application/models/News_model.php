@@ -142,7 +142,7 @@ class News_model extends CI_Model {
         $pdf->SetKeywords('News, PDF');
 
 // set default header data
-        $pdf->SetHeaderData('', PDF_HEADER_LOGO_WIDTH, $news_details->title, $news_details->email, array(0,64,255), array(0,64,128));
+        $pdf->SetHeaderData('', PDF_HEADER_LOGO_WIDTH, $news_details->title, $news_details->first_name.' '.$news_details->last_name, array(0,64,255), array(0,64,128));
         $pdf->setFooterData(array(0,64,0), array(0,64,128));
 
 // set header and footer fonts

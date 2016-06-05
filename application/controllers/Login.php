@@ -21,13 +21,18 @@ class Login extends MY_Controller {
         }
         $this->load->helper('string');
         $this->load->library(array('form_validation'));
-        $this->form_validation->set_rules('email', 'Email', 'required|valid_email');
+        $this->load->model('user');
+        $this->form_validation->set_rules('first_name', 'First name', 'required');
+        $this->form_validation->set_rules('last_name', 'Last name', 'required');
+        $this->form_validation->set_rules('email', 'Email', 'required|valid_email|callback_email_unique_check');
         if ($this->form_validation->run() == true)
         {
             $data['email']    = strtolower($this->input->post('email'));
+            $data['first_name']  = $this->input->post('first_name');
+            $data['last_name']   = $this->input->post('last_name');
             $data['activation_code'] = random_string('alnum', 25);
             $data['active'] = 0;
-            $this->load->model('user');
+
             if ($this->user->register_user($data))
             {
                 $this->send_email($data['email'],$data['activation_code']);
@@ -40,6 +45,21 @@ class Login extends MY_Controller {
         }
         $data['partial'] = 'login/register';
         $this->load_view($data);
+    }
+
+
+    public function email_unique_check($email) {
+        $this->load->model('user');
+        if ($this->user->is_email_exists($email))
+        {
+            $this->form_validation->set_message('email_unique_check', 'The {field}  already exists.');
+            return FALSE;
+        }
+        else
+        {
+            return TRUE;
+        }
+
     }
 
     /**
@@ -65,6 +85,7 @@ class Login extends MY_Controller {
         if ($this->form_validation->run() == true) {
             $this->load->model('user');
             $data['password']    = md5($this->input->post('password'));
+
             $data['activation_code'] = '';
             $data['active'] = 1;
             $this->user->update_user_password($this->input->post('id'),$data);

@@ -53,11 +53,20 @@ class User extends CI_Model {
           return'';
     }
 
+    public function is_email_exists($email) {
+        $this->db->select('email');
+        $this->db->where('email', $email);
+        $result = $this->db->get('users', 1)->row();
+        return $this->db->affected_rows();
+    }
+
     public function delete_user($id){
         $this->db->where('id', $id);
         $this->db->delete('users');
         return $this->db->affected_rows();
     }
+
+
 
 
 

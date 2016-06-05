@@ -10,7 +10,7 @@
                 'value'         => set_value('password'),
                 'placeholder'   => 'Password',
             ));
-            echo form_error('password');
+            echo form_error('password','<div class="error">', '</div>');
             ?>
             <?php
             echo form_label('Confirm password', 'password_confirm'); ?><span style="color: red">*</span>
@@ -19,7 +19,7 @@
                 'value'         => set_value('password_confirm'),
                 'placeholder'   => 'Confirm Password',
             ));
-            echo form_error('password_confirm');
+            echo form_error('password_confirm','<div class="error">', '</div>');
             ?>
             <?php echo form_submit('Save','save',array(
                 'name'          => 'submit',

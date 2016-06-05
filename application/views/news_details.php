@@ -22,7 +22,7 @@
           $units = 3;
           ?>
           <p class="lead">
-              <?php echo timespan($post_date, $now, 1);?> ago by <a href="#"><?php echo $news->email?></a>
+              <?php echo timespan($post_date, $now, 1);?> ago by <a href="#"><?php echo ucfirst($news->first_name)." ".$news->last_name ?></a>
           </p>
 
           <hr>

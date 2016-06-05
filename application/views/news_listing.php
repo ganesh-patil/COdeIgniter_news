@@ -24,7 +24,7 @@
               $units = 3;
               ?>
           <p class="lead">
-             <?php echo timespan($post_date, $now, 1);?> ago by <a href="#"><?php echo $news_details->email?></a>
+             <?php echo timespan($post_date, $now, 1);?> ago by <a href="#"><?php echo ucfirst($news_details->first_name)." ".$news_details->last_name ?></a>
           </p>
 
 

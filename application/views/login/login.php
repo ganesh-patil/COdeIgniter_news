@@ -11,7 +11,7 @@
         'placeholder'   => 'Email',
 
     ));
-    echo form_error('email');
+    echo form_error('email','<div class="error">', '</div>');
     ?>
     <?php
     echo form_label('Password', 'password'); ?><span style="color: red">*</span>
@@ -20,7 +20,7 @@
         'value'         => set_value('password'),
         'placeholder'   => 'Password',
     ));
-    echo form_error('password');
+    echo form_error('password','<div class="error">', '</div>');
     ?>
     <?php echo form_submit('Login','login',array(
         'name'          => 'submit',
@@ -29,7 +29,7 @@
     )); ?>
     <?php echo form_close();?>
 
-    <div class="login-help">
+    <div class=" create-link">
       <a href="<?php echo base_url('register')?>">Create account</a>
     </div>
   </div>
