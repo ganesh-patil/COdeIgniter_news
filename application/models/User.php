@@ -20,8 +20,6 @@ class User extends CI_Model {
     }
 
     public function update_user_password($user_id,$data) {
-
-
         $this->db->where('id', $user_id);
         $this->db->update('users', $data);
     }
@@ -53,6 +51,12 @@ class User extends CI_Model {
               return $result;
           }
           return'';
+    }
+
+    public function delete_user($id){
+        $this->db->where('id', $id);
+        $this->db->delete('users');
+        return $this->db->affected_rows();
     }
 
 
