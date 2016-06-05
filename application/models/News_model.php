@@ -211,5 +211,12 @@ EOD;
         $pdf->Output($name.'.pdf', 'I');
     }
 
+    public function get_news_by_news_id($news_id){
+        $this->db->limit(1);
+        $this->db->where('news.id',$news_id);
+        $query = $this->db->get('news');
+        return $query->row();
+    }
+
 
 }

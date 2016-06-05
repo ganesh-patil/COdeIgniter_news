@@ -11,6 +11,7 @@
      }
      public function testInsert()
      {
+         
          $this->CI->load->model('user');
          $this->CI->load->helper('string');
          // Create Test User account
