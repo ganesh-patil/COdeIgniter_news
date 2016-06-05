@@ -101,6 +101,10 @@ $config['charset'] = 'UTF-8';
 |
 */
 $config['enable_hooks'] = TRUE;
+if(ENVIRONMENT == 'development'){
+    $config['enable_hooks'] = FALSE;
+}
+
 
 /*
 |--------------------------------------------------------------------------
