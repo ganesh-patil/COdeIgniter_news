@@ -53,7 +53,6 @@ class Login extends MY_Controller {
             $this->session->set_flashdata('error', "You are already logged in ");
             redirect(base_url(), 'refresh');
         }
-
         $this->load->model('user');
         $user_data = $this->user->get_user_by_activation_code($activation_code);
         if(empty($user_data)){
@@ -67,9 +66,10 @@ class Login extends MY_Controller {
             $this->load->model('user');
             $data['password']    = md5($this->input->post('password'));
             $data['activation_code'] = '';
-            $data['active'] = 0;
+            $data['active'] = 1;
             $this->user->update_user_password($this->input->post('id'),$data);
-
+            $this->session->set_flashdata('success', "Password savesd successfully. please login to your account.");
+            redirect(base_url('login'));
         }
         $data['id'] =  $user_data->id;
         $data['partial'] = 'login/create_user';
@@ -77,6 +77,9 @@ class Login extends MY_Controller {
 
     }
 
+    /**
+     * Mail login method
+     */
      public function index() {
          if ($this->is_logged_in())
          {
@@ -99,12 +102,15 @@ class Login extends MY_Controller {
          else
          {
              //Go to private area
-             
-             redirect(base_url(), 'refresh');
+             $this->session->set_flashdata('success', "logged in sucessfully..");
+             redirect(base_url('my_news'), 'refresh');
          }
      }
 
-    function logout()
+    /**
+     * Logout method
+     */
+    public function logout()
     {
         if (!$this->is_logged_in())
         {
@@ -116,7 +122,11 @@ class Login extends MY_Controller {
         redirect(base_url('login'), 'refresh');
     }
 
-    private function check_database($password)
+    /** check_database method : check user credentials and login
+     * @param $password
+     * @return bool
+     */
+    public function check_database($password)
     {
         //Field validation succeeded.  Validate against database
         $username = $this->input->post('email');
@@ -151,7 +161,7 @@ class Login extends MY_Controller {
 
         $subject = 'News Portal Email  Verification';
 
-        $body = "Hello $email <br> Thank you for registration. <br> Please <a href='".base_url().'/verification/'.$activation_code."' > Click Here</a> to vetify your email address. <br>  Thanks ";
+        $body = "Hello $email <br> Thank you for registration. <br> Please <a href='".base_url().'verification/'.$activation_code."' > Click Here</a> to vetify your email address. <br>  Thanks ";
 
 
         $this->phpmailer->isSMTP();                                      // Set mailer to use SMTP
