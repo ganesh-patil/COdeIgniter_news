@@ -40,3 +40,6 @@ footer {
 .news-header {
  text-align: center;
 }
+.listing-image {
+    width: 28.333333% !important;
+}

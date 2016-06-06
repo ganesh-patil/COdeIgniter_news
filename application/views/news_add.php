@@ -33,7 +33,7 @@
     ?>
 </div>
 <div class="form-group">
-<?php  echo form_label('Upload Image', 'image_url'); ?><span style="color: red"> (Image dimensions should be more that 300*200px.)</span>
+<?php  echo form_label('Upload Image', 'image_url'); ?><span style="color: red"> (Image dimensions should be between  300X200. and  1400X800)</span>
 <input type="file" name="image_url" size="20" />
 </div>
 

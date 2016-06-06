@@ -92,7 +92,7 @@ class News extends MY_Controller {
                     }
                 }
                 else {
-                    $this->session->set_flashdata('error', 'Image not uploaded ... please try again');
+                    $this->session->set_flashdata('error', 'The image you are attempting to upload doesnt fit into the allowed dimensions.');
                 }
             }
         }
