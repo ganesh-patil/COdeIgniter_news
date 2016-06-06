@@ -122,8 +122,8 @@ class Login extends MY_Controller {
             $this->session->set_flashdata('error', $this->lang->line('Invalid link'));
             redirect(base_url(), 'refresh');
         }
-        $this->form_validation->set_rules('password', 'Please enter valid password', 'required|min_length[5]|max_length[10]|matches[password_confirm]');
-        $this->form_validation->set_rules('password_confirm', 'please enter valid confirm passsword', 'required');
+        $this->form_validation->set_rules('password', 'Password', 'required|min_length[5]|max_length[10]|matches[password_confirm]');
+        $this->form_validation->set_rules('password_confirm', 'confirm Password', 'required');
         if ($this->form_validation->run() == true) {
             $this->load->model('user');
             $data['password']    = password_hash($this->input->post('password'), PASSWORD_DEFAULT);        //hash password before save.

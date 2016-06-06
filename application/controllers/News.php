@@ -20,7 +20,6 @@ class News extends MY_Controller {
         $this->load->model('news_model');
         $data['news'] = $this->news_model->get_latest_news(10);
         $data['partial'] = 'news_listing';
-
         $this->load_view($data);
     }
 
@@ -34,7 +33,7 @@ class News extends MY_Controller {
         $this->load->model('news_model');
         $news_id = $this->uri->segment(2);
         $data['news'] = $this->news_model->get_news_by_id($news_id);
-        if(empty($data['news'])){
+        if(empty($data['news'])) {    // if news id not present for requested id then redirect to 404 page.
             show_404();
         }
         $data['partial'] = 'news_details';
