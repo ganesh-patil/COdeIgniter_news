@@ -145,6 +145,7 @@ class News extends MY_Controller {
      * Rss feeds of latest news
      */
     public function rss_feeds() {
+        $this->output->set_content_type('text/xml');
         $this->load->helper(array('url','date','text'));
         $this->load->model('news_model');
         $data['news'] = $this->news_model->get_latest_news(10);

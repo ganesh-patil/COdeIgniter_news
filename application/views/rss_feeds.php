@@ -1,7 +1,5 @@
-<?php header ("Content-Type:text/xml"); ?>
 <?php echo '<?xml version="1.0" encoding="UTF-8"?>';?>
-<?php
-$rss_feed = '
+<?php $rss_feed = '
         <rss version="2.0">
             <channel>
                 <title>News </title>
@@ -15,7 +13,11 @@ $rss_feed = '
             $mysqldate = gmdate(DATE_RFC822, strtotime($news_details->created));
             $data .= ' <item>
                     <title><![CDATA[ '.$news_details->title .' ]]></title>
-                    <author><![CDATA['.$news_details->email.']]></author>
+                    <author>
+                      <first_name><![CDATA['.$news_details->first_name.']]></first_name>
+                      <last_name><![CDATA['.$news_details->last_name.']]></last_name>
+                      <email><![CDATA['.$news_details->email.']]></email>
+                     </author>
                     <link>'. base_url().'news_details/'.$news_details->id.'</link>
                     <description><![CDATA[
                     '.$news_details->description.' ]]>
