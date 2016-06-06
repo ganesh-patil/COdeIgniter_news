@@ -1,3 +1,4 @@
+<script type='text/javascript' src="<?php echo base_url(); ?>js/news.js"></script>
 <?php
   if (!empty($news)) { ?>
 
@@ -11,7 +12,7 @@
           <div  class="add_news_btn col-lg-3">
               <a type="button" href="<?php echo base_url().'news/download/'.$news->id?>" class="btn btn-primary">Download</a>
               <?php if($is_logged_in && $logged_in_user_id == $news->user_id ) { ?>
-                  <a type="button" href="<?php echo base_url().'news/delete/'.$news->id?>" class="btn btn-danger">Delete</a>
+                  <a type="button" href="<?php echo base_url().'news/delete/'.$news->id?>" class="btn btn-danger delete-news">Delete</a>
               <?php } ?>
           </div>
 
@@ -42,5 +43,7 @@
 
   <?php }
 
+
+ $this->load->view('news_confirm');
 ?>
 

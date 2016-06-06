@@ -1,9 +1,10 @@
-
+<script type='text/javascript' src="<?php echo base_url(); ?>js/news.js"></script>
 <?php
   if (!empty($news)) { ?>
       <div class="div-float-both news-header">
           <h2>Breaking News</h2>
       </div>
+
       <?php foreach($news as $news_details){ ?>
           <div class="div-float-both">
           <hr>
@@ -13,9 +14,8 @@
                   </div>
                   
                   <div  class="add_news_btn col-lg-3">
-                      <a type="button" href="<?php echo base_url().'news/download/'.$news_details->id?>" class="btn btn-primary">Download</a>
                       <?php if($is_logged_in && $logged_in_user_id == $news_details->user_id ) { ?>
-                      <a type="button" href="<?php echo base_url().'news/delete/'.$news_details->id?>" class="btn btn-danger">Delete</a>
+                      <a type="button" href="<?php echo base_url().'news/delete/'.$news_details->id?>" class="btn btn-danger delete-news"  >Delete</a>
                       <?php } ?>
                   </div>
 
@@ -53,25 +53,9 @@
 
       <?php  }
   }
+
+
+$this->load->view('news_confirm');
 ?>
-<div id="myModal" class="modal fade" role="dialog">
-    <div class="modal-dialog">
-
-        <!-- Modal content-->
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
-                <h4 class="modal-title">Delete News </h4>
-            </div>
-            <div class="modal-body">
-                <p>Do you want to delete a news </p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-            </div>
-        </div>
-
-    </div>
-</div>
 
 
