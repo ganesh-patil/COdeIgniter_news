@@ -29,16 +29,18 @@
           <hr>
 
           <!-- Preview Image -->
+           <div><p style="float: left; padding-right: 20px">
           <?php
           if(!empty($news->image_url)){ ?>
               <img class="img-responsive" src="<?php echo base_url().'upload/'.$news->image_url ?>" alt="">
 
           <?php } ?>
-
+               </p>
           <p class="lead">
+              
               <?php echo $news->description ?>
           </p>
-
+           </div>
 
 
   <?php }

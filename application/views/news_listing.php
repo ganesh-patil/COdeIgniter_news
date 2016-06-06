@@ -32,24 +32,31 @@
 
 
           <!-- Preview Image -->
-          <div class="col-lg-4">
-          <?php
-          if(!empty($news_details->thumbnail_url)){ ?>
-              <img class="img-responsive" src="<?php echo base_url().'upload/'.$news_details->thumbnail_url ?>" alt="">
+              <?php if(!empty($news_details->thumbnail_url)) { ?>
+              <div class="col-lg-4 listing-image" >
+                  <img class="img-responsive" src="<?php echo base_url().'upload/'.$news_details->thumbnail_url ?>" alt="">
+              </div>
+              <div class="col-lg-8">
+                  <p class="lead newstxt">
+                      <?php
+                  $read_more = "<a href='".base_url().'news_details/'.$news_details->id."'>..read more</a>";
+                  echo word_limiter($news_details->description,85,$read_more) ?>
+                  </p>
+              </div>
 
-          <?php } ?>
-          </div>
-          <div class="col-lg-8">
-          <p class="lead newstxt">
+              <?php } else { ?>
+              <div class="col-lg-8">
+                <p class="lead newstxt">
 
               <?php
-          $read_more = "<a href='".base_url().'news_details/'.$news_details->id."'>..read more</a>";
-          echo word_limiter($news_details->description,50,$read_more) ?>
-          </p>
-          </div>
+              $read_more = "<a href='".base_url().'news_details/'.$news_details->id."'>..read more</a>";
+              echo word_limiter($news_details->description,85,$read_more) ?>
+              </p>
+              </div>
+          <?php     } ?>
           <hr>
           </div>
-
+          <br><br>
 
       <?php  }
   }
