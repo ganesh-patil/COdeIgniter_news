@@ -9,38 +9,64 @@ class User extends CI_Model {
         $this->load->database();
     }
 
+    /**
+     * get user by activation code
+     * @param $activation_code
+     * @return mixed user array
+     */
     public function get_user_by_activation_code($activation_code) {
         $this->db->where('activation_code', $activation_code);
         $query = $this->db->get('users', 1);
         return $query->row();
     }
 
+    /**
+     * get user by email id
+     * @param $email
+     * @return mixed user array
+     */
     public function get_user_by_email($email) {
         $this->db->where('email', $email);
         $query = $this->db->get('users', 1);
         return $query->row();
     }
+
+    /**
+     * Create New User
+     * @param $data
+     * @return mixed
+     */
     public function register_user($data) {
 
         return $this->db->insert('users', $data);
     }
 
+    /**
+     * Update user data
+     *
+     * @param $user_id
+     * @param $data  all  user data along with password
+     * @return mixed number of records updated
+     */
     public function update_user_password($user_id,$data) {
         $this->db->where('id', $user_id);
         $this->db->update('users', $data);
         return $this->db->affected_rows();
     }
 
+    /**
+     * Login : check users username and password in db also check user is active or not
+     * @param $username
+     * @param $password
+     * @return mixed if  login successfull return user otherwise retun false
+     */
     function login($username, $password) {
         $this -> db -> select('id, email, password');
         $this -> db -> from('users');
         $this -> db -> where('email', $username);
-//        $this -> db -> where('password', MD5($password));
         $this -> db -> where('active', 1);
         $this -> db -> limit(1);
-
         $query = $this -> db -> get();
-
         if($query -> num_rows() == 1) {
             $user =  $query->result();
             $hash =  $user[0]->password;
@@ -53,6 +79,12 @@ class User extends CI_Model {
         }
     }
 
+    /**
+     * get requested clolumn value
+     * @param $column
+     * @param $id
+     * @return string calum value
+     */
     public function get_identity_column_value($column,$id) {
           $result  = $this->db->select(array($column,'password'))
               ->where('id', $id)
@@ -64,6 +96,11 @@ class User extends CI_Model {
           return'';
     }
 
+    /**
+     * Check Emailk Id Exist or not
+     * @param $email
+     * @return int 1 on success o0 on failure
+     */
     public function is_email_exists($email) {
         $this->db->select('email');
         $this->db->where('email', $email);
@@ -71,6 +108,11 @@ class User extends CI_Model {
         return $this->db->affected_rows();
     }
 
+    /**
+     * Delete User By ID
+     * @param $id
+     * @return mixed deleted record count
+     */
     public function delete_user($id){
         $this->db->where('id', $id);
         $this->db->delete('users');
@@ -84,7 +126,7 @@ class User extends CI_Model {
      * @param $first_name
      * @param $last_name
      * @param bool $forgot_password
-     * @return mixed
+     * @return mixed sent status
      */
     public function send_email($email,$activation_code,$first_name, $last_name,$forgot_password = false) {
         $this->load->add_package_path(APPPATH.'third_party/phpmailer', FALSE);
@@ -122,9 +164,5 @@ class User extends CI_Model {
 
         return $this->phpmailer->Send();
     }
-
-
-
-
 
 }

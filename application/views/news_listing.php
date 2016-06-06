@@ -40,17 +40,17 @@
                   <p class="lead newstxt">
                       <?php
                   $read_more = "<a href='".base_url().'news_details/'.$news_details->id."'>..read more</a>";
-                  echo word_limiter($news_details->description,85,$read_more) ?>
+                  echo word_limiter($news_details->description,80,$read_more) ?>
                   </p>
               </div>
 
               <?php } else { ?>
-              <div class="col-lg-8">
+              <div class="col-lg-12">
                 <p class="lead newstxt">
 
               <?php
               $read_more = "<a href='".base_url().'news_details/'.$news_details->id."'>..read more</a>";
-              echo word_limiter($news_details->description,85,$read_more) ?>
+              echo word_limiter($news_details->description,80,$read_more) ?>
               </p>
               </div>
           <?php     } ?>

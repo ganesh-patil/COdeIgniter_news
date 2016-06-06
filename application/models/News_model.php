@@ -8,6 +8,11 @@ class News_model extends CI_Model {
         parent::__construct();
     }
 
+    /**
+     * Get Latest news by limit.
+     * @param $limit
+     * @return mixed
+     */
     public function get_latest_news($limit)
     {
         $this->db->limit($limit);
@@ -19,6 +24,11 @@ class News_model extends CI_Model {
         return $query->result();
     }
 
+    /** Get Users News
+     * Here we are fetching first 50 news of a user.
+     * @param $user_id
+     * @return mixed
+     */
     public function get_news_by_user_id($user_id)
     {
         $this->db->limit(50);  // change limit with pagination
@@ -29,12 +39,23 @@ class News_model extends CI_Model {
         $query = $this->db->get('news');
         return $query->result();
     }
+
+    /**
+     * Insert News
+     * @param $data
+     * @return mixed
+     */
     public function insert_entry($data)
     {
             $data['created'] = date("Y-m-d H:i:s");
         return $this->db->insert('news', $data);
     }
 
+    /**
+     * Get News By Id
+     * @param $news_id
+     * @return mixed
+     */
     public function get_news_by_id($news_id){
         $this->db->limit(1);
         $this->db->select(array('news.*','users.email','users.first_name','users.last_name'));
@@ -44,12 +65,21 @@ class News_model extends CI_Model {
         return $query->row();
     }
 
+    /**
+     * Delete  news by ID
+     * @param $id
+     * @return mixed
+     */
     public function delete_news($id){
         $this->db->where('id', $id);
         $this->db->delete('news');
         return $this->db->affected_rows();
     }
 
+    /**
+     * Check validations on news data
+     * @return bool
+     */
     public function check_is_valid_data(){
         $this->load->library('form_validation');
 
@@ -123,8 +153,12 @@ class News_model extends CI_Model {
         }
         return true;
     }
-    
-    
+
+    /**
+     * Pdf Download Method.
+     * @param $news_id
+     * @throws Exception
+     */
     public function download($news_id) {
         $news_details = $this->get_news_by_id($news_id);
         if(empty($news_details)) {
